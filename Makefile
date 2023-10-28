@@ -234,6 +234,20 @@ else ifeq ($(platform), switch)
 	STATIC_LINKING=1
 	fpic := -nostdlib
 
+# SF2000
+else ifeq ($(platform), sf2000)
+    TARGET := $(TARGET_NAME)_libretro_$(platform).a
+    MIPS=/opt/mips32-mti-elf/2019.09-03-2/bin/mips-mti-elf-
+    CC = $(MIPS)gcc
+    CXX = $(MIPS)g++
+    AR = $(MIPS)ar
+    CFLAGS =-EL -march=mips32 -mtune=mips32 -msoft-float -ffast-math -fomit-frame-pointer
+    CFLAGS+=-G0 -mno-abicalls -fno-pic
+#	-ffreestanding
+    CFLAGS+=-DSF2000
+    CXXFLAGS=$(CFLAGS)
+    STATIC_LINKING = 1
+
 # emscripten
 else ifeq ($(platform), emscripten)
 	TARGET := $(TARGET_NAME)_libretro_$(platform).bc
