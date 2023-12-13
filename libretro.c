@@ -798,7 +798,9 @@ bool retro_load_game(const struct retro_game_info *info)
    char slash;
    unsigned i;
    const char *save_dir = NULL;
+#if !defined(SF2000)
    enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
+#endif
 
    struct retro_input_descriptor desc[] = {
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,  "D-Pad Left" },
@@ -851,11 +853,13 @@ bool retro_load_game(const struct retro_game_info *info)
 
    environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
 
+#if !defined(SF2000)
    if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
    {
       //fprintf(stderr, "Pixel format XRGB8888 not supported by platform, cannot use.\n");
       return false;
    }
+#endif
 
    videoWidth           = 320;
    videoHeight          = 240;
@@ -972,6 +976,16 @@ void retro_init(void)
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_INPUT_BITMASKS, NULL))
       libretro_supports_bitmasks = true;
+
+#if defined(SF2000)
+   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
+
+   if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
+   {
+      //fprintf(stderr, "Pixel format XRGB8888 not supported by platform, cannot use.\n");
+      return false;
+   }
+#endif
 }
 
 void retro_deinit(void)
